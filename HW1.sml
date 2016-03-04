@@ -53,5 +53,24 @@ val MONTHS = ["January", "February", "March", "April",
 fun date_to_string (date: int*int*int) =
 	get_nth(MONTHS, #2 date) ^ " " ^ Int.toString(#3 date) ^ ", " ^ Int.toString(#1 date)
 
+fun number_before_reaching_sum(sum: int, pos_nums: int list)=
+	if sum < 0 then 0 else 1 + number_before_reaching_sum(sum - (hd pos_nums), tl pos_nums)
 
+val MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
+fun what_month (day: int) =
+	get_nth(MONTHS, number_before_reaching_sum(day, MONTH_DAYS))
+
+fun month_range (day1: int, day2: int) =
+	if day1=day2 then []
+	else what_month::month_range(day1+1, day2)
+
+fun oldest(dates:(int*int*int) list) =
+	if null dates then NONE
+	else 
+		let val next = oldest(tl dates) 
+		in 
+			if isSome(next) andalso (#2 (hd dates)) > valOf(next) 
+			then SOME(#2 (hd dates))
+			else next
+		end
